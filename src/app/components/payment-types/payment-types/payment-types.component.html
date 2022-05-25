@@ -1,0 +1,149 @@
+<p-toast></p-toast>
+<div class="card mt-4">
+  <p-toolbar>
+    <ng-template pTemplate="left">
+      <button
+        pButton
+        pRipple
+        label="New Payment Type"
+        icon="pi pi-plus"
+        class="p-button-success p-button-text p-mr-2"
+        (click)="newPaymentType()"
+      ></button>
+    </ng-template>
+  </p-toolbar>
+  <p-table
+    #dt
+    [value]="paymentTypes"
+    [rows]="5"
+    [paginator]="true"
+    [globalFilterFields]="['paymentTypeName', 'paymentTypeIssuedBy']"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-between">
+        <h3 class="m-0">Manage Payment Types</h3>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="paymentTypeName">
+          Name <p-sortIcon field="paymentTypeName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="paymentTypeIssuedBy">
+          Issued By
+          <p-sortIcon field="paymentTypeIssuedBy"></p-sortIcon>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-paymentType | async>
+      <tr>
+        <td>{{ paymentType.paymentTypeName }}</td>
+        <td>{{ paymentType.paymentTypeIssuedBy }}</td>
+        <td>
+          <span class="p-buttonset">
+            <button
+              pButton
+              pRipple
+              icon="pi pi-pencil"
+              class="p-button-info"
+              pTooltip="Edit"
+              tooltipPosition="bottom"
+              (click)="editPaymentType(paymentType)"
+            ></button>
+            <button
+              pButton
+              pRipple
+              icon="pi pi-trash"
+              class="p-button-warning"
+              pTooltip="Delete"
+              tooltipPosition="bottom"
+              (click)="deletePaymentType(paymentType.id)"
+            ></button>
+          </span>
+        </td>
+      </tr>
+      <p-confirmDialog
+        [style]="{ width: '50vw' }"
+        [baseZIndex]="10000"
+        rejectButtonStyleClass="p-button-text"
+      ></p-confirmDialog>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+        In total there are {{ paymentTypes ? paymentTypes.length : 0 }} payment
+        types.
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+<p-dialog
+  [(visible)]="paymentTypeDialog"
+  [style]="{ width: '450px' }"
+  header="Payment Type Details"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <form
+      #addPaymentTypeForm="ngForm"
+      (ngSubmit)="onSubmit(addPaymentTypeForm.value, id!)"
+      novalidate
+    >
+      <div class="field">
+        <label for="paymentTypeName">Payment Type Name</label>
+        <input
+          type="text"
+          pInputText
+          id="paymentTypeName"
+          name="paymentTypeName"
+          [(ngModel)]="paymentType.paymentTypeName"
+          required
+          autofocus
+        />
+        <small class="p-error" *ngIf="submitted && !paymentType.paymentTypeName"
+          >Payment Type Name is required.</small
+        >
+      </div>
+      <div class="field">
+        <label for="paymentTypeIssuedBy">Payment Type Issued By</label>
+        <input
+          type="text"
+          pInputText
+          id="paymentTypeIssuedBy"
+          name="paymentTypeIssuedBy"
+          [(ngModel)]="paymentType.paymentTypeIssuedBy"
+          required
+          autofocus
+        />
+        <small
+          class="p-error"
+          *ngIf="submitted && !paymentType.paymentTypeIssuedBy"
+          >Payment Type Issued By is required.</small
+        >
+      </div>
+      <div>
+        <button
+          pButton
+          type="submit"
+          value="Submit"
+          label="Save"
+          icon="pi pi-check"
+          class="p-button-raised p-button-text p-button-success mt-3"
+        ></button>
+        <button
+          pButton
+          pRipple
+          label="Cancel"
+          icon="pi pi-times"
+          class="p-button-raised p-button-text p-button-warning mt-3"
+          (click)="hideDialog()"
+        ></button>
+      </div>
+    </form>
+  </ng-template>
+</p-dialog>

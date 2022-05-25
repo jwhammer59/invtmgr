@@ -1,0 +1,91 @@
+<p-toast position="top-center"></p-toast>
+<div class="flex justify-content-center mt-5">
+  <p-card [style]="{ width: '20rem', 'margin-bottom': '2em' }">
+    <ng-template pTemplate="header">
+      <div class="flex justify-content-center mt-5">
+        <p class="text-3xl font-semibold">
+          Register <span><i class="pi pi-pencil text-2xl"></i></span>
+        </p>
+      </div>
+    </ng-template>
+    <div>
+      <form
+        [formGroup]="registerForm"
+        (ngSubmit)="onSubmit(registerForm)"
+        novalidate
+      >
+        <div class="flex justify-content-center">
+          <div class="grid p-fluid">
+            <div class="col-12">
+              <div class="field">
+                <label for="email">Email Address</label>
+                <input
+                  type="text"
+                  pInputText
+                  id="email"
+                  name="email"
+                  formControlName="email"
+                  required
+                />
+                <small
+                  *ngIf="registerForm.controls['email'].invalid"
+                  id="email-help"
+                  class="p-error block"
+                  >{{ getEmailErrorMessage() }}</small
+                >
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="field">
+                <label for="password">Password</label>
+                <input
+                  type="text"
+                  pInputText
+                  id="password"
+                  name="password"
+                  formControlName="password"
+                  required
+                />
+                <small
+                  *ngIf="registerForm.controls['password'].invalid"
+                  id="password-help"
+                  class="p-error block"
+                  >{{ getPasswordErrorMessage() }}</small
+                >
+              </div>
+            </div>
+            <!-- <div class="col-12">
+              <div class="field">
+                <label for="passwordConfirm">Confirm Password</label>
+                <input
+                  type="text"
+                  pInputText
+                  id="passwordConfirm"
+                  name="passwordConfirm"
+                  formControlName="passwordConfirm"
+                  required
+                />
+                <small
+                  *ngIf="registerForm.controls['passwordConfirm'].invalid"
+                  id="passwordConfirm-help"
+                  class="p-error block"
+                  >{{ getPasswordConfirmErrorMessage() }}</small
+                >
+              </div>
+            </div> -->
+          </div>
+        </div>
+
+        <div class="flex justify-content-center">
+          <p-button
+            type="submit"
+            value="Submit"
+            label="Login"
+            icon="pi pi-sign-in"
+            styleClass="p-button-success"
+          ></p-button>
+        </div>
+      </form>
+    </div>
+  </p-card>
+</div>

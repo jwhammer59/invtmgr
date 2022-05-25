@@ -1,0 +1,313 @@
+<p-toast></p-toast>
+<div class="card mt-4">
+  <p-toolbar>
+    <ng-template pTemplate="left">
+      <button
+        pButton
+        pRipple
+        label="New Item"
+        icon="pi pi-plus"
+        class="p-button-success p-button-text p-mr-2"
+        (click)="newItem()"
+      ></button>
+    </ng-template>
+  </p-toolbar>
+  <p-table
+    #dt
+    [value]="items"
+    [rows]="5"
+    [paginator]="true"
+    [globalFilterFields]="[
+      'itemName',
+      'itemDesc',
+      'itemLocation',
+      'itemQty',
+      'itemPurchasePrice'
+    ]"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-between">
+        <h3 class="m-0">Manage Items</h3>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="itemName">
+          Name <p-sortIcon field="itemName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="itemDesc">
+          Description
+          <p-sortIcon field="itemDesc"></p-sortIcon>
+        </th>
+        <th pSortableColumn="itemLocation">
+          Location
+          <p-sortIcon field="itemLocation"></p-sortIcon>
+        </th>
+        <th pSortableColumn="itemQty">
+          Qty
+          <p-sortIcon field="itemQty"></p-sortIcon>
+        </th>
+        <th pSortableColumn="itemPurchasePrice">
+          Cost
+          <p-sortIcon field="itemPurchasePrice"></p-sortIcon>
+        </th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item | async>
+      <tr>
+        <td>{{ item.itemName }}</td>
+        <td>{{ item.itemDesc }}</td>
+        <td>{{ item.itemLocation.locationName }}</td>
+        <td>{{ item.itemQty }}</td>
+        <td>{{ item.itemPurchasePrice | currency }}</td>
+        <td>
+          <span class="p-buttonset">
+            <button
+              class="p-button-warning"
+              pButton
+              pRipple
+              icon="pi pi-info-circle"
+              pTooltip="Details"
+              tooltipPosition="bottom"
+              routerLink="item-detail/{{ item.id }}"
+            ></button>
+            <button
+              class="p-button-info"
+              pButton
+              pRipple
+              icon="pi pi-pencil"
+              pTooltip="Edit"
+              tooltipPosition="bottom"
+              (click)="editItem(item)"
+            ></button>
+            <button
+              class="p-button-danger"
+              pButton
+              pRipple
+              icon="pi pi-trash"
+              pTooltip="Delete"
+              tooltipPosition="bottom"
+              (click)="deleteItem(item.id)"
+            ></button>
+          </span>
+        </td>
+      </tr>
+      <p-confirmDialog
+        [style]="{ width: '50vw' }"
+        [baseZIndex]="10000"
+        rejectButtonStyleClass="p-button-text"
+      ></p-confirmDialog>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+        In total there are {{ items ? items.length : 0 }} items.
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+<p-dialog
+  [(visible)]="itemDialog"
+  [style]="{ width: '850px' }"
+  header="Location Details"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <form
+      #addItemForm="ngForm"
+      (ngSubmit)="onSubmit(addItemForm.value, id!)"
+      novalidate
+    >
+      <div class="grid p-fluid">
+        <div class="col-12 md:col-8">
+          <div class="field">
+            <label for="itemName">Item Name</label>
+            <input
+              type="text"
+              pInputText
+              id="itemName"
+              name="itemName"
+              [(ngModel)]="item.itemName"
+              required
+              autofocus
+            />
+            <small class="p-error" *ngIf="submitted && !item.itemName"
+              >Name is required.</small
+            >
+          </div>
+        </div>
+        <div class="col-12 md:col-4">
+          <div class="field">
+            <label for="itemQty">Item Qty</label>
+            <input
+              type="text"
+              pInputText
+              id="itemQty"
+              name="itemQty"
+              [(ngModel)]="item.itemQty"
+              required
+            />
+            <small class="p-error" *ngIf="submitted && !item.itemQty"
+              >Qty is required.</small
+            >
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="itemName">Item Description</label>
+        <input
+          type="text"
+          pInputText
+          id="itemDesc"
+          name="itemDesc"
+          [(ngModel)]="item.itemDesc"
+        />
+      </div>
+
+      <div class="field">
+        <p-dropdown
+          *ngIf="locations$ | async as locations"
+          [options]="locations"
+          name="itemLocation"
+          [(ngModel)]="item.itemLocation"
+          placeholder="Select a Location"
+          optionLabel="locationName"
+          [showClear]="true"
+        ></p-dropdown>
+        <small class="p-error" *ngIf="submitted && !item.itemLocation"
+          >Location is required.</small
+        >
+      </div>
+
+      <div class="grid p-fluid">
+        <div class="col-12 md:col-4">
+          <div class="field">
+            <label for="itemMfg">Item Manufacturer</label>
+            <input
+              type="text"
+              pInputText
+              id="itemMfg"
+              name="itemMfg"
+              [(ngModel)]="item.itemMfg"
+            />
+          </div>
+        </div>
+        <div class="col-12 md:col-4">
+          <div class="field">
+            <label for="itemModelNum">Item Model #</label>
+            <input
+              type="text"
+              pInputText
+              id="itemModelNum"
+              name="itemModelNum"
+              [(ngModel)]="item.itemModelNum"
+            />
+          </div>
+        </div>
+        <div class="col-12 md:col-4">
+          <div class="field">
+            <label for="itemSerialNum">Item Serial #</label>
+            <input
+              type="text"
+              pInputText
+              id="itemSerialNum"
+              name="itemSerialNum"
+              [(ngModel)]="item.itemSerialNum"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="grid p-fluid">
+        <div class="col-12 md:col-4">
+          <div class="field">
+            <label for="itemPurchasePrice">Item Purchase Price</label>
+            <input
+              type="text"
+              pInputText
+              id="itemPurchasePrice"
+              name="itemPurchasePrice"
+              [(ngModel)]="item.itemPurchasePrice"
+            />
+          </div>
+        </div>
+        <div class="col-12 md:col-4">
+          <div class="field">
+            <label for="itemPurchaseDate">Item Purchase Date</label>
+            <p-calendar
+              id="itemPurchaseDate"
+              name="itemPurchaseDate"
+              [(ngModel)]="item.itemPurchaseDate"
+              [showIcon]="true"
+            ></p-calendar>
+          </div>
+        </div>
+        <div class="flex flex-column justify-content-center col-12 md:col-4">
+          <div class="flex justify-content-center">
+            <div class="field-checkbox">
+              <p-checkbox
+                [(ngModel)]="item.itemExtWarranty"
+                [binary]="true"
+                inputId="itemExtWarranty"
+                name="itemExtWarranty"
+              ></p-checkbox>
+              <label for="itemExtWarranty">Extended Warranty?</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid p-fluid">
+        <div class="col-12 md:col-6">
+          <div class="field">
+            <p-dropdown
+              *ngIf="vendors$ | async as vendors"
+              [options]="vendors"
+              name="itemVendor"
+              [(ngModel)]="item.itemVendor"
+              placeholder="Select a Vendor"
+              optionLabel="vendorName"
+              [showClear]="true"
+            ></p-dropdown>
+          </div>
+        </div>
+        <div class="col-12 md:col-6">
+          <div class="field">
+            <p-dropdown
+              *ngIf="paymentTypes$ | async as paymentTypes"
+              [options]="paymentTypes"
+              name="itemPaymentType"
+              [(ngModel)]="item.itemPaymentType"
+              placeholder="Select a Payment Type"
+              optionLabel="paymentTypeName"
+              [showClear]="true"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button
+          pButton
+          type="submit"
+          value="Submit"
+          label="Save"
+          icon="pi pi-check"
+          class="p-button-raised p-button-text p-button-success mt-3"
+        ></button>
+        <button
+          pButton
+          pRipple
+          label="Cancel"
+          icon="pi pi-times"
+          class="p-button-raised p-button-text p-button-warning mt-3"
+          (click)="hideDialog()"
+        ></button>
+      </div>
+    </form>
+  </ng-template>
+</p-dialog>

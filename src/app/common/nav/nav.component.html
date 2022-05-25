@@ -1,0 +1,41 @@
+<p-menubar [model]="items">
+  <ng-template pTemplate="start">
+    <div *ngIf="!isLoggedIn">
+      <button
+        type="button"
+        pButton
+        class="p-button-text"
+        label="Login"
+        icon="pi pi-sign-in"
+        routerLink="/login"
+      ></button>
+      <button
+        type="button"
+        pButton
+        class="p-button-text"
+        label="Register"
+        icon="pi pi-pencil"
+        routerLink="/register"
+      ></button>
+    </div>
+  </ng-template>
+  <div *ngIf="isLoggedIn" class="flex justifiy-content-center">
+    <div class="flex flex-column justify-content-center">
+      <span class="mr-2"
+        ><span class="font-semibold">Logged in User:</span>
+        {{ loggedInUser }}</span
+      >
+    </div>
+    <div>
+      <button
+        type="button"
+        pButton
+        class="p-button-text"
+        label="Logout"
+        icon="pi pi-power-off"
+        style="margin-left: 0.25em"
+        (click)="onLogoutClick()"
+      ></button>
+    </div>
+  </div>
+</p-menubar>

@@ -1,0 +1,165 @@
+<p-toast></p-toast>
+<div class="card mt-4">
+  <p-toolbar>
+    <ng-template pTemplate="left">
+      <button
+        pButton
+        pRipple
+        label="New Location"
+        icon="pi pi-plus"
+        class="p-button-success p-button-text p-mr-2"
+        (click)="newLocation()"
+      ></button>
+    </ng-template>
+  </p-toolbar>
+  <p-table
+    #dt
+    [value]="locations"
+    [rows]="5"
+    [paginator]="true"
+    [globalFilterFields]="['locationName', 'locationDwelling', 'locationLevel']"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-between">
+        <h3 class="m-0">Manage Locations</h3>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="locationName">
+          Name <p-sortIcon field="locationName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="locationDwelling">
+          Dwelling
+          <p-sortIcon field="locationDwelling"></p-sortIcon>
+        </th>
+        <th pSortableColumn="locationLevel">
+          Level
+          <p-sortIcon field="locationLevel"></p-sortIcon>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-location | async>
+      <tr>
+        <td>{{ location.locationName }}</td>
+        <td>{{ location.locationDwelling.dwellingName }}</td>
+        <td>{{ location.locationLevel }}</td>
+        <td>
+          <span class="p-buttonset">
+            <button
+              pButton
+              pRipple
+              icon="pi pi-pencil"
+              class="p-button-info"
+              pTooltip="Edit"
+              tooltipPosition="bottom"
+              (click)="editLocation(location)"
+            ></button>
+            <button
+              pButton
+              pRipple
+              icon="pi pi-trash"
+              class="p-button-warning"
+              pTooltip="Delete"
+              tooltipPosition="bottom"
+              (click)="deleteLocation(location.id)"
+            ></button>
+          </span>
+        </td>
+      </tr>
+      <p-confirmDialog
+        [style]="{ width: '50vw' }"
+        [baseZIndex]="10000"
+        rejectButtonStyleClass="p-button-text"
+      ></p-confirmDialog>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+        In total there are {{ locations ? locations.length : 0 }} locations.
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+<p-dialog
+  [(visible)]="locationDialog"
+  [style]="{ width: '450px' }"
+  header="Location Details"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <form
+      #addLocationForm="ngForm"
+      (ngSubmit)="onSubmit(addLocationForm.value, id!)"
+      novalidate
+    >
+      <div class="field">
+        <label for="locationName">Location Name</label>
+        <input
+          type="text"
+          pInputText
+          id="locationName"
+          name="locationName"
+          [(ngModel)]="location.locationName"
+          required
+          autofocus
+        />
+        <small class="p-error" *ngIf="submitted && !location.locationName"
+          >Name is required.</small
+        >
+      </div>
+      <div class="field">
+        <p-dropdown
+          *ngIf="dwellings$ | async as dwellings"
+          [options]="dwellings"
+          name="locationDwelling"
+          [(ngModel)]="location.locationDwelling"
+          placeholder="Select a Dwelling"
+          optionLabel="dwellingName"
+          [showClear]="true"
+        ></p-dropdown>
+        <small class="p-error" *ngIf="submitted && !location.locationDwelling"
+          >Dwelling is required.</small
+        >
+      </div>
+      <div class="field">
+        <label for="locationLevel">Location Level</label>
+        <input
+          type="text"
+          pInputText
+          id="locationLevel"
+          name="locationLevel"
+          [(ngModel)]="location.locationLevel"
+          required
+          autofocus
+        />
+        <small class="p-error" *ngIf="submitted && !location.locationLevel"
+          >Level is required.</small
+        >
+      </div>
+      <div>
+        <button
+          pButton
+          type="submit"
+          value="Submit"
+          label="Save"
+          icon="pi pi-check"
+          class="p-button-raised p-button-text p-button-success mt-3"
+        ></button>
+        <button
+          pButton
+          pRipple
+          label="Cancel"
+          icon="pi pi-times"
+          class="p-button-raised p-button-text p-button-warning mt-3"
+          (click)="hideDialog()"
+        ></button>
+      </div>
+    </form>
+  </ng-template>
+</p-dialog>

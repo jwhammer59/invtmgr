@@ -1,0 +1,97 @@
+<div class="card mt-4">
+  <p-card
+    header="{{ item.itemName }}"
+    subheader="{{ item.itemDesc }}"
+    styleClass="p-card-shadow"
+  >
+    <ng-template pTemplate="content">
+      <p-tabView styleClass="tabview-custom">
+        <p-tabPanel>
+          <ng-template pTemplate="header">
+            <i class="pi pi-cog"></i>
+            <span>Mfg Details</span>
+          </ng-template>
+          <div class="grid p-fluid">
+            <div class="col-12 md:col-4">
+              <p class="text-base font-bold">Item Manufacturer</p>
+              <p>{{ item.itemMfg }}</p>
+            </div>
+            <div class="col-12 md:col-4">
+              <p class="text-base font-bold">Item Model #</p>
+              <p>{{ item.itemModelNum }}</p>
+            </div>
+            <div class="col-12 md:col-4">
+              <p class="text-base font-bold">Item Serial #</p>
+              <p>{{ item.itemSerialNum }}</p>
+            </div>
+          </div>
+        </p-tabPanel>
+        <p-tabPanel header="Location">
+          <ng-template pTemplate="header">
+            <i class="pi pi-building"></i>
+            <span>Purchase Details</span>
+          </ng-template>
+          <div class="grid p-fluid">
+            <div class="col-12 md:col-4">
+              <p class="text-base font-bold">Item Purchase Date</p>
+              <p>{{ item.itemPurchaseDate?.toDate() | date: "mediumDate" }}</p>
+            </div>
+            <div class="col-12 md:col-4">
+              <p class="text-base font-bold">Item Purchase Price</p>
+              <p>{{ item.itemPurchasePrice | currency }}</p>
+            </div>
+            <div class="col-12 md:col-4">
+              <p class="text-base font-bold">Item Extended Warranty</p>
+              <p-checkbox
+                [(ngModel)]="item.itemExtWarranty"
+                [binary]="true"
+                inputId="itemExtWarranty"
+                [disabled]="true"
+              ></p-checkbox>
+              <label class="ml-2 capitalize" for="itemExtWarranty">{{
+                item.itemExtWarranty
+              }}</label>
+            </div>
+          </div>
+        </p-tabPanel>
+        <p-tabPanel header="Purchase">
+          <ng-template pTemplate="header">
+            <i class="pi pi-dollar"></i>
+            <span>Location Details</span>
+          </ng-template>
+          <div class="grid p-fluid">
+            <div class="col-12 md:col-4">
+              <p class="text-base font-bold">Item Location</p>
+              <p>{{ item.itemLocation.locationName }}</p>
+            </div>
+            <div class="col-12 md:col-4">
+              <p class="text-base font-bold">Item Vendor</p>
+              <p>{{ item.itemVendor.vendorName }}</p>
+            </div>
+            <div class="col-12 md:col-4">
+              <p class="text-base font-bold">Item Payment Type</p>
+              <p>{{ item.itemPaymentType.paymentTypeName }}</p>
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <div class="flex justify-content-between">
+        <div>
+          <p-button
+            label="Back to Items"
+            icon="pi pi-arrow-left"
+            routerLink="/items"
+          ></p-button>
+        </div>
+        <div>
+          <p>
+            <span class="text-base font-bold mr-1">Item Qty:</span>
+            {{ item.itemQty }}
+          </p>
+        </div>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

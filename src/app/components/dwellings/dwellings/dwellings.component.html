@@ -1,0 +1,207 @@
+<p-toast></p-toast>
+<div class="card mt-4">
+  <p-toolbar>
+    <ng-template pTemplate="left">
+      <button
+        pButton
+        pRipple
+        label="New Dwelling"
+        icon="pi pi-plus"
+        class="p-button-success p-button-text p-mr-2"
+        (click)="newDwelling()"
+      ></button>
+    </ng-template>
+  </p-toolbar>
+  <p-table
+    #dt
+    [value]="dwellings"
+    [rows]="5"
+    [paginator]="true"
+    [globalFilterFields]="[
+      'dwellingName',
+      'dwellingAddress',
+      'dwellingCity',
+      'dwellingState',
+      'dwellingZipcode'
+    ]"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-between">
+        <h3 class="m-0">Manage Dwellings</h3>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="dwellingName">
+          Name <p-sortIcon field="dwellingName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="dwellingAddress">
+          Address
+          <p-sortIcon field="dwellingAddress"></p-sortIcon>
+        </th>
+        <th pSortableColumn="dwellingCity">
+          City <p-sortIcon field="dwellingCity"></p-sortIcon>
+        </th>
+        <th pSortableColumn="dwellingState">
+          State <p-sortIcon field="dwellingState"></p-sortIcon>
+        </th>
+        <th pSortableColumn="dwellingZipcode">
+          Zipcode <p-sortIcon field="dwellingZipcode"></p-sortIcon>
+        </th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dwelling | async>
+      <tr>
+        <td>{{ dwelling.dwellingName }}</td>
+        <td>{{ dwelling.dwellingAddress }}</td>
+        <td>{{ dwelling.dwellingCity }}</td>
+        <td>{{ dwelling.dwellingState.name }}</td>
+        <td>{{ dwelling.dwellingZipcode }}</td>
+        <td>
+          <span class="p-buttonset">
+            <button
+              pButton
+              pRipple
+              icon="pi pi-pencil"
+              class="p-button-info"
+              pTooltip="Edit"
+              tooltipPosition="bottom"
+              (click)="editDwelling(dwelling)"
+            ></button>
+            <button
+              pButton
+              pRipple
+              icon="pi pi-trash"
+              class="p-button-warning"
+              pTooltip="Delete"
+              tooltipPosition="bottom"
+              (click)="deleteDwelling(dwelling.id)"
+            ></button>
+          </span>
+        </td>
+      </tr>
+      <p-confirmDialog
+        [style]="{ width: '50vw' }"
+        [baseZIndex]="10000"
+        rejectButtonStyleClass="p-button-text"
+      ></p-confirmDialog>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+        In total there are {{ dwellings ? dwellings.length : 0 }} dwellings.
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+<p-dialog
+  [(visible)]="dwellingDialog"
+  [style]="{ width: '450px' }"
+  header="Vendor Details"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <form
+      #addDwellingForm="ngForm"
+      (ngSubmit)="onSubmit(addDwellingForm.value, id!)"
+      novalidate
+    >
+      <div class="field">
+        <label for="dwellingName">Name</label>
+        <input
+          type="text"
+          pInputText
+          id="dwellingName"
+          name="dwellingName"
+          [(ngModel)]="dwelling.dwellingName"
+          required
+          autofocus
+        />
+        <small class="p-error" *ngIf="submitted && !dwelling.dwellingName"
+          >Dwelling name is required.</small
+        >
+      </div>
+      <div class="field">
+        <label for="dwellingAddress">Address</label>
+        <input
+          type="text"
+          pInputText
+          id="dwellingAddress"
+          name="dwellingAddress"
+          [(ngModel)]="dwelling.dwellingAddress"
+          required
+          autofocus
+        />
+        <small class="p-error" *ngIf="submitted && !dwelling.dwellingAddress"
+          >Dwelling address is required.</small
+        >
+      </div>
+      <div class="field">
+        <label for="dwellingCity">City</label>
+        <input
+          type="text"
+          pInputText
+          id="dwellingCity"
+          name="dwellingCity"
+          [(ngModel)]="dwelling.dwellingCity"
+          required
+          autofocus
+        />
+        <small class="p-error" *ngIf="submitted && !dwelling.dwellingCity"
+          >City is required.</small
+        >
+      </div>
+      <div class="field">
+        <p-dropdown
+          [options]="states"
+          name="dwellingState"
+          [(ngModel)]="dwelling.dwellingState"
+          placeholder="Select a State"
+          optionLabel="name"
+          [showClear]="true"
+        ></p-dropdown>
+        <small class="p-error" *ngIf="submitted && !dwelling.dwellingState"
+          >State is required.</small
+        >
+      </div>
+      <div class="field">
+        <label for="dwellingZipcode">Zipcode</label>
+        <input
+          type="number"
+          pInputText
+          id="dwellingZipcode"
+          name="dwellingZipcode"
+          [(ngModel)]="dwelling.dwellingZipcode"
+          required
+          autofocus
+        />
+        <small class="p-error" *ngIf="submitted && !dwelling.dwellingZipcode"
+          >Zipcode is required.</small
+        >
+      </div>
+      <div>
+        <button
+          pButton
+          type="submit"
+          value="Submit"
+          label="Save"
+          icon="pi pi-check"
+          class="p-button-raised p-button-text p-button-success mt-3"
+        ></button>
+        <button
+          pButton
+          pRipple
+          label="Cancel"
+          icon="pi pi-times"
+          class="p-button-raised p-button-text p-button-warning mt-3"
+          (click)="hideDialog()"
+        ></button>
+      </div>
+    </form>
+  </ng-template>
+</p-dialog>
